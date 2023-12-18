@@ -1,5 +1,7 @@
 package org.oskkar.crudapirest.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.oskkar.crudapirest.dto.UserDto;
 import org.oskkar.crudapirest.entity.User;
@@ -10,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(
+        name = "Users",
+        description = "Users API"
+)
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/users")
@@ -17,7 +23,7 @@ public class Controller {
     private UserService userService;
 
     @PostMapping("/create")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto user) {
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto user) {
         UserDto userSaved = userService.createUser(user);
         return new ResponseEntity<>(userSaved, HttpStatus.CREATED);
     }
@@ -33,7 +39,7 @@ public class Controller {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<UserDto> updateUserById(@PathVariable("id") Integer userId, @RequestBody User user) {
+    public ResponseEntity<UserDto> updateUserById(@PathVariable("id") Integer userId, @Valid @RequestBody UserDto user) {
         user.setId(userId);
         UserDto userUpdated = userService.updateUserById(user);
         return new ResponseEntity<>(userUpdated, HttpStatus.OK);

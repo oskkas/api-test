@@ -22,19 +22,13 @@ public class UserServiceImpl implements UserService {
     private ModelMapper modelMapper;
     @Override
     public UserDto createUser(UserDto userDto) {
-        //User user = UserMapper.toUser(userDto);
-        //User user = modelMapper.map(userDto, User.class);
-
         Optional<User> findByEmail = userRepository.findByEmail(userDto.getEmail());
         if (findByEmail.isPresent()) {
             throw new EmailAlreadyExistsException("Email already exists");
         }
 
         User user = AutoUserMapper.MAPPER.toUser(userDto);
-
         User savedUser = userRepository.save(user);
-
-        //UserDto userDtoSaved = modelMapper.map(savedUser, UserDto.class);
 
         return AutoUserMapper.MAPPER.toUserDto(savedUser);
     }
@@ -42,10 +36,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllUsers() {
         List<User> userList = userRepository.findAll();
-        /*return userList.stream().map(UserMapper::toUserDto)
-                .collect(Collectors.toList());*/
-        /*return userList.stream().map(user -> modelMapper.map(user, UserDto.class))
-                .collect(Collectors.toList());*/
+
         return userList.stream().map(AutoUserMapper.MAPPER::toUserDto)
                 .collect(Collectors.toList());
     }
@@ -55,12 +46,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User", "id", userId)
         );
-        //UserDto userDto = modelMapper.map(user, UserDto.class);
+
         return AutoUserMapper.MAPPER.toUserDto(user);
     }
 
     @Override
-    public UserDto updateUserById(User user) {
+    public UserDto updateUserById(UserDto user) {
         User userToUpdate = userRepository.findById(user.getId()).orElseThrow(
                 () -> new ResourceNotFoundException("User", "id", user.getId())
         );
@@ -68,7 +59,7 @@ public class UserServiceImpl implements UserService {
         userToUpdate.setLastName(user.getLastName());
         userToUpdate.setEmail(user.getEmail());
         userRepository.save(userToUpdate);
-        //return modelMapper.map(userToUpdate, UserDto.class);
+
         return AutoUserMapper.MAPPER.toUserDto(userToUpdate);
     }
 
